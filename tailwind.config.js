@@ -4,7 +4,6 @@ module.exports = {
     './screens/**/*.{js,ts,jsx,tsx}',
     './pages/**/*.{js,ts,jsx,tsx}',
     './components/**/*.{js,ts,jsx,tsx}',
-    './*'
   ],
   theme: {
     extend: {
@@ -12,6 +11,7 @@ module.exports = {
         orange_new: '#FAE2D6',
         gray_new: '#808080',
         green_new: '#1DAE46',
+        green_driver: '#9CFE7F',
         bule_new: '#55ADFF',
         orange_intense: '#FFB45C',
         orange_theme: '#F37234',
