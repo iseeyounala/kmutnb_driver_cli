@@ -9,7 +9,6 @@ import {
   BellAlertIcon,
   UserIcon,
 } from 'react-native-heroicons/outline';
-import AntDesign from 'react-native-vector-icons/AntDesign';
 import HomeScreen from '../screens/HomeScreen';
 import HistoryScreen from '../screens/HistoryScreen';
 import NotificationScreen from '../screens/NotificationScreen';
@@ -37,7 +36,7 @@ const TabNavigator = () => {
   return (
     <Tab.Navigator
       screenOptions={route => ({
-        tabBarActiveTintColor: '#F37234',
+        tabBarActiveTintColor: '#1DAE46',
         tabBarInactiveTintColor: '#000000',
         tabBarStyle: {
           backgroundColor: '#FFF',
@@ -88,7 +87,7 @@ const TabNavigator = () => {
           tabBarIcon: ({color, size}) => (
             <View style={style.radius_out}>
               <View style={style.radius_in}>
-                <AntDesign name="scan1" color="#FFF" size={size} />
+                {/* <AntDesign name="scan1" color="#FFF" size={size} /> */}
               </View>
             </View>
           ),
@@ -124,7 +123,7 @@ export default TabNavigator;
 
 const style = StyleSheet.create({
   radius_in: {
-    backgroundColor: '#F37234',
+    backgroundColor: '#1DAE46',
     width: 50,
     height: 50,
     borderRadius: 35,

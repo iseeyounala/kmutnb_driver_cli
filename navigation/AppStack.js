@@ -7,6 +7,7 @@ import FlashMessage from 'react-native-flash-message';
 import TabNavigator from './TabNavigator';
 import HeaderStack from '../components/HeaderStack';
 import LoginScreen from '../screens/LoginScreen';
+import HomeScreen from '../screens/HomeScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -17,7 +18,7 @@ const AuthStack = () => {
         screenOptions={() => ({
           headerShown: false,
         })}>
-        <Stack.Screen name="Home" component={TabNavigator} />
+        <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Group
           screenOptions={() => ({
             // presentation: 'modal',

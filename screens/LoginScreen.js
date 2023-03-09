@@ -24,8 +24,8 @@ const LoginScreen = () => {
   const [isModalHandelSuccess, setModalHandelSuccess] = useState(false);
   const [isModalHandelFail_Check, setModalHandelFail_Check] = useState(false);
   const [isModalHandelFail, setModalHandelFail] = useState(false);
-  const username = useState(null);
-  const password = useState(null);
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
 
   const handleUsername = (text) => {
     setUsername(text);
@@ -41,6 +41,34 @@ const LoginScreen = () => {
   };
   const toggleModalSuccess = () => {
     setModalHandelSuccess(!isModalHandelSuccess);
+  };
+
+  const loginHandle = () => {
+    if (username.length > 0 && password.length > 0) {
+      Axios.post("/mobile/driver/login", {
+        username: username,
+        password: password,
+      })
+        .then((res) => {
+          let { status, meg, token } = res.data;
+          if (status) {
+            toggleModalSuccess();
+            setTextModal(meg);
+            setTimeout(() => {
+              login(token);
+            }, 1000);
+          } else {
+            toggleModalFail();
+            setTextModal(meg);
+          }
+          console.log(res.data);
+        })
+        .catch((err) => {
+          console.error(err);
+        });
+    } else {
+      toggleModalFail_check();
+    }
   };
 
   return (
@@ -72,7 +100,7 @@ const LoginScreen = () => {
             onChangeText={handlePassword}
           />
           <TouchableOpacity
-            // onPress={loginHandle}
+            onPress={loginHandle}
             className="bg-white rounded-md h-10 my-2 justify-center items-center"
           >
             <Text className="text-green_new font-kanit_semi_bold">

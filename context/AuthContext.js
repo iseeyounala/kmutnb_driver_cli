@@ -24,30 +24,35 @@ export const AuthProvider = ({ children }) => {
     AsyncStorage.removeItem("userToken");
     setIsLoading(false);
   };
-  const getItem_token = async () => {
-    try {
-      let token = await AsyncStorage.getItem("userToken");
-      // console.log('wdawdawda', token);
-      setUserToken(token);
-      return token;
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  // const getItem_token = async () => {
+  //   try {
+  //     let token = await AsyncStorage.getItem("userToken");
+  //     console.log('wdawdawda', token);
+  //     setUserToken(token);
+  //     return token;
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // };
   const check_auth = () => {
-    Axios.get("/auth")
-      .then((res) => {
-        let { auth } = res.data;
-        if (auth) {
-          getItem_token();
-        } else {
-          setUserToken(null);
-        }
-        console.log(res.data);
-      })
-      .catch((err) => {
-        console.error("auth", err);
-      });
+    AsyncStorage.getItem("userToken").then((val) => {
+      const token = val;
+      if (token.length > 0) {
+        Axios.get("/auth")
+          .then((res) => {
+            let { auth } = res.data;
+            if (auth) {
+              setUserToken(token);
+            } else {
+              setUserToken(null);
+            }
+            console.log(res.data);
+          })
+          .catch((err) => {
+            console.error("auth", err);
+          });
+      }
+    });
   };
   const isLoggendIn = async () => {
     try {
