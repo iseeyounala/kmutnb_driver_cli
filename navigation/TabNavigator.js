@@ -9,9 +9,10 @@ import {
   BellAlertIcon,
   UserIcon,
 } from 'react-native-heroicons/outline';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import HomeScreen from '../screens/HomeScreen';
 import HistoryScreen from '../screens/HistoryScreen';
-import NotificationScreen from '../screens/NotificationScreen';
+import PickUpScreen from '../screens/PickUpScreen';
 import AccountScreen from '../screens/AccountScreen';
 import HeaderStack from '../components/HeaderStack';
 
@@ -59,50 +60,16 @@ const TabNavigator = () => {
         }}
       />
       <Tab.Screen
-        name="history"
-        component={HistoryScreen}
-        options={{
-          tabBarLabel: 'ประวัติ',
-          // headerStyle: {
-          //   backgroundColor: '#F37234',
-          //   height: 110,
-          // },
-          // headerTitleStyle: {
-          //   fontFamily: 'Kanit-Bold',
-          //   fontSize: 20,
-          //   color: '#FFFF',
-          // },
-          header: () => <HeaderStack goBackClose title="ประวัติ" />,
-          tabBarIcon: ({color, size}) => (
-            <ClockIcon color={color} size={size} />
-          ),
-        }}
-      />
-      <Tab.Screen
-        name="scan"
-        component={HomeStack}
-        options={{
-          tabBarLabel: 'ScanQR',
-          headerShown: false,
-          tabBarIcon: ({color, size}) => (
-            <View style={style.radius_out}>
-              <View style={style.radius_in}>
-                {/* <AntDesign name="scan1" color="#FFF" size={size} /> */}
-              </View>
-            </View>
-          ),
-        }}
-      />
-      <Tab.Screen
         name="notification"
-        component={NotificationScreen}
+        component={PickUpScreen}
         options={{
-          tabBarLabel: 'แจ้งเตือน',
+          tabBarLabel: 'รับ-ส่ง',
           headerShown: false,
           tabBarBadge: 3,
           tabBarBadgeStyle: {backgroundColor: 'red'},
           tabBarIcon: ({color, size}) => (
-            <BellAlertIcon color={color} size={size} />
+            // <BellAlertIcon color={color} size={size} />
+            <MaterialIcons name="airport-shuttle" color={color} size={size} />
           ),
         }}
       />

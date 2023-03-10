@@ -5,7 +5,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 const HomeScreen = () => {
   return (
     <SafeAreaView className="flex-1">
-      <View className="bg-green_new h-[200] justify-center items-center">
+      <View className="bg-green_new h-[200] justify-center items-center rounded-br-[70px] rounded-bl-[70px]">
         <Text className="text-white text-[50px] font-kanit_bold mb-[-15]">
           KMUTNB
         </Text>
