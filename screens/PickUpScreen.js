@@ -29,7 +29,7 @@ import {
 import { commonImage } from "../constant/images";
 import Loader from "../components/Loader";
 import AlertModalFail from "../components/AlertModalFail";
-
+import socket from '../constant/socket';
 const screen = Dimensions.get("window");
 const ASPECT_RATIO = screen.width / screen.height;
 const LATITUDE_DELTA = 0.04;
@@ -73,7 +73,7 @@ const PickUpScreen = () => {
     radius: 100,
   });
   const [isModalHandelFail, setModalHandelFail] = useState(false);
-
+ 
   const {
     curLoc,
     time,
@@ -111,8 +111,17 @@ const PickUpScreen = () => {
           longitudeDelta: LONGITUDE_DELTA,
         }),
       });
+      let data = {
+        latitude: latitude,
+        longitude: longitude
+      };
+      socket.emit("sent_data_driver", data);
     }
   };
+
+  // socket.on("call_back", (e) => {
+  //   console.log(e);
+  // })
 
   const onPressLocation = () => {
     navigation.navigate("ChooseLocation", { getCordinates: fetchValue });
@@ -154,9 +163,9 @@ const PickUpScreen = () => {
     return () => clearInterval(interval);
   }, []);
 
-  useEffect(() => {
-   
-  }, [curLoc]);
+  socket.on('test', (data) => {
+    console.log("IO Work", data)
+  })
 
   const checkLocationInCircle = (center, radius, location) => {
     center.latitude = parseFloat(center.latitude);

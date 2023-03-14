@@ -42,6 +42,7 @@ const TabNavigator = () => {
         tabBarStyle: {
           backgroundColor: '#FFF',
           shadowOpacity: 0.2,
+          // marginTop: 10,
           // opacity: 0.3,
           height: Platform.OS === 'ios' ? height * 0.1 : 60,
         },
