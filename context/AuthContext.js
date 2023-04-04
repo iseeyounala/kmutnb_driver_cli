@@ -8,10 +8,14 @@ export const AuthProvider = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [userToken, setUserToken] = useState(null);
 
-  const login = async (token) => {
+  const login = async (token, driver_id) => {
+    let data = {
+      driver_id: driver_id,
+    };
     try {
       setIsLoading(true);
       await AsyncStorage.setItem("userToken", token);
+      await AsyncStorage.setItem('userData', JSON.stringify(data));
       await setUserToken(token);
       setIsLoading(false);
     } catch (error) {

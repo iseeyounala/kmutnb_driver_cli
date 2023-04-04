@@ -68,6 +68,7 @@ const TabNavigator = () => {
           headerShown: false,
           tabBarBadge: 3,
           tabBarBadgeStyle: {backgroundColor: 'red'},
+          unmountOnBlur: true,
           tabBarIcon: ({color, size}) => (
             // <BellAlertIcon color={color} size={size} />
             <MaterialIcons name="airport-shuttle" color={color} size={size} />

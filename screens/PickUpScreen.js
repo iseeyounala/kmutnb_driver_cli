@@ -7,8 +7,10 @@ import {
   Image,
   Platform,
   Animated,
+  ScrollView,
 } from "react-native";
 import React, {
+  useContext,
   useCallback,
   useMemo,
   useRef,
@@ -22,6 +24,8 @@ import BottomSheetCustom from "../components/BottomSheet";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import MapViewDirections from "react-native-maps-directions";
 import Entypo from "react-native-vector-icons/Entypo";
+import MaterialIcons from "react-native-vector-icons/MaterialIcons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   locationPermission,
   getCurrentLocation,
@@ -29,16 +33,19 @@ import {
 import { commonImage } from "../constant/images";
 import Loader from "../components/Loader";
 import AlertModalFail from "../components/AlertModalFail";
-import socket from '../constant/socket';
+import socket from "../constant/socket";
 const screen = Dimensions.get("window");
 const ASPECT_RATIO = screen.width / screen.height;
 const LATITUDE_DELTA = 0.04;
 const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 const GOOGLE_MAP_KEY = "AIzaSyBHBTkH9fICG5hTL1xNFkyLXaQGyZU6fek";
+// import {AuthContext} from '../context/AuthContext';
+import Axios from "../constant/Axios";
 
-const PickUpScreen = () => {
+const PickUpScreen = ({ navigation }) => {
   const mapRef = useRef();
   const markerRef = useRef();
+  // const {logout} = useContext(AuthContext);
 
   const [state, setState] = useState({
     curLoc: {
@@ -56,24 +63,11 @@ const PickUpScreen = () => {
     time: 0,
     distance: 0,
     heading: 0,
-    showMaker: [
-      {
-        latitude: 14.1592493,
-        longitude: 101.3456391,
-      },
-      {
-        latitude: 14.163719453758143,
-        longitude: 101.3651555191761,
-      },
-      {
-        latitude: 14.16176247800782,
-        longitude: 101.36137628591756,
-      },
-    ],
+    showMaker: [],
     radius: 100,
   });
   const [isModalHandelFail, setModalHandelFail] = useState(false);
- 
+
   const {
     curLoc,
     time,
@@ -93,6 +87,9 @@ const PickUpScreen = () => {
 
   useEffect(() => {
     getLiveLocation();
+    updateSocketId();
+    get_data_check_point();
+    // logout();
   }, []);
 
   const getLiveLocation = async () => {
@@ -111,11 +108,47 @@ const PickUpScreen = () => {
           longitudeDelta: LONGITUDE_DELTA,
         }),
       });
+      sentDataDriver(latitude, longitude);
+    }
+  };
+
+  const updateSocketId = async () => {
+    try {
+      const savedUser = await AsyncStorage.getItem("userData");
+      const currentUser = JSON.parse(savedUser);
+      Axios.post("/mobile/driver/updateSocketId", {
+        driver_id: currentUser.driver_id,
+        socketId: socket.id,
+      })
+        .then((res) => {
+          console.log(res.data);
+        })
+        .catch((err) => {
+          console.error(err);
+        });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const sentDataDriver = async (latitude, longitude) => {
+    try {
+      const savedUser = await AsyncStorage.getItem("userData");
+      const currentUser = JSON.parse(savedUser);
       let data = {
+        driver_id: currentUser.driver_id,
         latitude: latitude,
-        longitude: longitude
+        longitude: longitude,
       };
-      socket.emit("sent_data_driver", data);
+      Axios.post("/mobile/driver/updateLocation", data)
+        .then((res) => {
+          console.log(res.data);
+        })
+        .catch((err) => {
+          console.error(err);
+        });
+    } catch (error) {
+      console.log(error);
     }
   };
 
@@ -159,13 +192,29 @@ const PickUpScreen = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       getLiveLocation();
+      // console.log(socket.id);
     }, 2000);
     return () => clearInterval(interval);
   }, []);
 
-  socket.on('test', (data) => {
-    console.log("IO Work", data)
-  })
+  useEffect(() => {
+    socket.on("update_list_checkPoint", () => {
+      console.log("update_list_checkPoint!!!");
+      get_data_check_point();
+    });
+  }, [socket]);
+
+  const get_data_check_point = () => {
+    Axios.post("/mobile/driver/getDataListCheckPoint")
+      .then((res) => {
+        console.log(res.data);
+        let { status, result } = res.data;
+        status ? updateState({ showMaker: result }) : null;
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  };
 
   const checkLocationInCircle = (center, radius, location) => {
     center.latitude = parseFloat(center.latitude);
@@ -246,20 +295,20 @@ const PickUpScreen = () => {
                     // checkLocationInCircle(center, radius, curLoc);
                     updateState({
                       destinationCords: {
-                        latitude: val.latitude,
-                        longitude: val.longitude,
+                        latitude: val.cpd_lat,
+                        longitude: val.cpd_long,
                       },
                     });
                   }}
                   coordinate={{
-                    latitude: val.latitude,
-                    longitude: val.longitude,
+                    latitude: val.cpd_lat,
+                    longitude: val.cpd_long,
                   }}
                 >
                   <Entypo name="location-pin" color="#F37234" size={40} />
                 </Marker>
                 <Circle
-                  center={{ latitude: val.latitude, longitude: val.longitude }}
+                  center={{ latitude: val.cpd_lat, longitude: val.cpd_long }}
                   radius={radius}
                   fillColor="rgba(250,226,214,0.5)"
                   strokeWidth={0}
@@ -294,13 +343,13 @@ const PickUpScreen = () => {
                       // top: 100,
                     },
                   });
-                  if (result.distance < 0.02) {
-                    updateState({
-                      destinationCords: {},
-                      distance: 0,
-                      time: 0,
-                    });
-                  }
+                if (result.distance < 0.02) {
+                  updateState({
+                    destinationCords: {},
+                    distance: 0,
+                    time: 0,
+                  });
+                }
               }}
               onError={(errorMessage) => {
                 // console.log('GOT AN ERROR');
@@ -330,7 +379,71 @@ const PickUpScreen = () => {
         </View>
       )}
       <Loader isLoading={isLoading} />
-      <BottomSheetCustom />
+      <BottomSheetCustom>
+        <View className="p-5">
+          <TouchableOpacity
+            className="justify-center items-center bg-red-400 rounded h-[35px]"
+            onPress={() => {
+              navigation.navigate("NotifyCarScreen");
+            }}
+          >
+            <Text className="font-kanit_semi_bold text-lg text-white">
+              แจ้งปัญหา
+            </Text>
+          </TouchableOpacity>
+          <Text className="font-kanit_semi_bold text-[13px] text-red-500">
+            *กรณีรถเกิดขัดข้อง
+          </Text>
+          <Text className="text-black font-kanit_bold text-[20px] mt-2">
+            รายละเอียด CheckPoint
+          </Text>
+          <ScrollView className="mb-10">
+            {showMaker.map((data, idx) => {
+              return (
+                <TouchableOpacity
+                  className="flex-col justify-between"
+                  key={idx}
+                >
+                  <View className="flex-col rounded-lg p-3">
+                    <View className="flex-row">
+                      <MaterialIcons
+                        name="directions"
+                        color="#F37234"
+                        size={20}
+                      />
+                      <Text className="text-black font-kanit_regular text-[15px] ml-1">
+                        {data.cpd_name}
+                      </Text>
+                    </View>
+                    <View className="flex-row justify-around mt-1">
+                      <View className="flex-row bg-green-400 rounded-lg h-[30px] w-[75px] justify-center items-center">
+                        <MaterialIcons
+                          name="person-add"
+                          color="#FFF"
+                          size={20}
+                        />
+                        <Text className="text-white font-kanit_regular text-[15px] ml-1">
+                          {data.amount.upPoint} คน
+                        </Text>
+                      </View>
+                      <View className="flex-row bg-red-400 rounded-lg h-[30px] w-[75px] justify-center items-center">
+                        <MaterialIcons
+                          name="person-remove"
+                          color="#FFF"
+                          size={20}
+                        />
+                        <Text className="text-white font-kanit_regular text-[15px] ml-1">
+                          {data.amount.downPoint} คน
+                        </Text>
+                      </View>
+                    </View>
+                  </View>
+                </TouchableOpacity>
+              );
+            })}
+          </ScrollView>
+        </View>
+      </BottomSheetCustom>
       <AlertModalFail
         isModalHandel={isModalHandelFail}
         onBackdropPress={toggleModalFail}

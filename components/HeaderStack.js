@@ -8,7 +8,7 @@ const HeaderStack = ({ title, goBackClose }) => {
   return (
     <>
       {Platform.OS === "ios" && (
-        <View className="flex-row items-center h-[110px] pt-[35] bg-orange_theme">
+        <View className="flex-row items-center h-[110px] pt-[35] bg-green_new">
           <View className="flex-1">
             {goBackClose ?? (
               <TouchableOpacity className="p-[10]" onPress={navigation.goBack}>
@@ -25,7 +25,7 @@ const HeaderStack = ({ title, goBackClose }) => {
         </View>
       )}
       {Platform.OS === "android" && (
-        <View className="flex-row items-center h-[80] bg-orange_theme">
+        <View className="flex-row items-center h-[80] bg-green_new">
           <View className="flex-1">
             {goBackClose ?? (
               <TouchableOpacity className="p-[10]" onPress={navigation.goBack}>
