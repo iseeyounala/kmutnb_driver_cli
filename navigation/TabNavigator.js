@@ -75,7 +75,7 @@ const TabNavigator = () => {
           ),
         }}
       />
-      <Tab.Screen
+      {/* <Tab.Screen
         name="account"
         component={AccountScreen}
         options={{
@@ -83,7 +83,7 @@ const TabNavigator = () => {
           headerShown: false,
           tabBarIcon: ({color, size}) => <UserIcon color={color} size={size} />,
         }}
-      />
+      /> */}
     </Tab.Navigator>
   );
 };

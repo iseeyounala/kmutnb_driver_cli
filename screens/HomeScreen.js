@@ -13,12 +13,12 @@ const HomeScreen = () => {
           SMART SERVICE For Driver
         </Text>
       </View>
-      <View className="flex-row p-10 mb-5">
+      {/* <View className="flex-row p-10 mb-5">
         <View className="flex-1 border border-gray_new bg-white rounded-md justify-center items-center h-[100] m-1">
           <MaterialIcons name="directions" size={20} />
           <Text className="font-kanit_semi_bold text-[20px]">แผนที่</Text>
         </View>
-      </View>
+      </View> */}
     </SafeAreaView>
   );
 };
