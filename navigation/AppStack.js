@@ -7,6 +7,8 @@ import FlashMessage from "react-native-flash-message";
 import TabNavigator from "./TabNavigator";
 import HeaderStack from "../components/HeaderStack";
 import NotifyCarScreen from "../screens/NotifyCarScreen";
+import UrgentScreen from "../screens/UrgentScreen";
+import UrgentCancelScreen from "../screens/UrgentCancelScreen";
 
 const Stack = createNativeStackNavigator();
 const AuthStack = () => {
@@ -29,6 +31,20 @@ const AuthStack = () => {
             component={NotifyCarScreen}
             options={{
               header: () => <HeaderStack title="รับ-ส่ง" />,
+            }}
+          />
+           <Stack.Screen
+            name="UrgentScreen"
+            component={UrgentScreen}
+            options={{
+              header: () => <HeaderStack title="รับ-ส่ง(ฉุกเฉิน)" />,
+            }}
+          />
+           <Stack.Screen
+            name="UrgentCancelScreen"
+            component={UrgentCancelScreen}
+            options={{
+              header: () => <HeaderStack title="รับ-ส่ง(ฉุกเฉิน)" />,
             }}
           />
         </Stack.Group>

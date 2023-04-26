@@ -1,8 +1,32 @@
-import { View, Text, SafeAreaView, ScrollView } from "react-native";
-import React from "react";
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import {
+  View,
+  Text,
+  SafeAreaView,
+  ScrollView,
+  TouchableOpacity,
+} from "react-native";
+import React, { useEffect, useState } from "react";
+import MaterialIcons from "react-native-vector-icons/MaterialIcons";
+import socket from "../constant/socket";
+import AlertModalSuccess from "../components/AlertModalSuccess";
 
-const HomeScreen = () => {
+const HomeScreen = ({ navigation }) => {
+  const [isModalHandelSuccess, setModalHandelSuccess] = useState(false);
+  const [textModal, setTextModal] = useState("");
+
+  const toggleModalSuccess = () => {
+    setModalHandelSuccess(!isModalHandelSuccess);
+  };
+  useEffect(() => {
+    socket.on("update_list_urgent", () => {
+      console.log("update_list_urgent!!!");
+      setTextModal("มีรายการเข้ามาใหม่!");
+      toggleModalSuccess();
+      setTimeout(() => {
+        navigation.navigate("UrgentScreen");
+      }, 1000);
+    });
+  }, [socket]);
   return (
     <SafeAreaView className="flex-1">
       <View className="bg-green_new h-[200] justify-center items-center rounded-br-[70px] rounded-bl-[70px]">
@@ -13,12 +37,22 @@ const HomeScreen = () => {
           SMART SERVICE For Driver
         </Text>
       </View>
-      {/* <View className="flex-row p-10 mb-5">
-        <View className="flex-1 border border-gray_new bg-white rounded-md justify-center items-center h-[100] m-1">
+      <TouchableOpacity
+        onPress={() => navigation.navigate("UrgentScreen")}
+        className="flex-row p-10 mb-5"
+      >
+        <View className="flex-1 bg-white rounded-md justify-center items-center h-[100] m-1">
           <MaterialIcons name="directions" size={20} />
-          <Text className="font-kanit_semi_bold text-[20px]">แผนที่</Text>
+          <Text className="font-kanit_semi_bold text-[20px]">
+            รายการฉุกเฉิน
+          </Text>
         </View>
-      </View> */}
+      </TouchableOpacity>
+      <AlertModalSuccess
+        isModalHandel={isModalHandelSuccess}
+        onBackdropPress={toggleModalSuccess}
+        detailText={textModal}
+      />
     </SafeAreaView>
   );
 };

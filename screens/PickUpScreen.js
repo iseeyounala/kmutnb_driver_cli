@@ -41,6 +41,7 @@ const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 const GOOGLE_MAP_KEY = "AIzaSyBHBTkH9fICG5hTL1xNFkyLXaQGyZU6fek";
 // import {AuthContext} from '../context/AuthContext';
 import Axios from "../constant/Axios";
+import AlertModalSuccess from "../components/AlertModalSuccess";
 
 const PickUpScreen = ({ navigation }) => {
   const mapRef = useRef();
@@ -151,10 +152,21 @@ const PickUpScreen = ({ navigation }) => {
       console.log(error);
     }
   };
-
-  // socket.on("call_back", (e) => {
-  //   console.log(e);
-  // })
+  const [isModalHandelSuccess, setModalHandelSuccess] = useState(false);
+  const [textModal, setTextModal] = useState("");
+  const toggleModalSuccess = () => {
+    setModalHandelSuccess(!isModalHandelSuccess);
+  };
+  useEffect(() => {
+    socket.on("update_list_urgent", () => {
+      console.log("update_list_urgent!!!");
+      setTextModal("มีรายการเข้ามาใหม่!");
+      toggleModalSuccess();
+      setTimeout(() => {
+        navigation.navigate("UrgentScreen");
+      }, 1000);
+    });
+  }, [socket]);
 
   const onPressLocation = () => {
     navigation.navigate("ChooseLocation", { getCordinates: fetchValue });
@@ -448,6 +460,11 @@ const PickUpScreen = ({ navigation }) => {
         isModalHandel={isModalHandelFail}
         onBackdropPress={toggleModalFail}
         detailText="คุณอยู่ห่างจากจุด CheckPoint"
+      />
+      <AlertModalSuccess
+        isModalHandel={isModalHandelSuccess}
+        onBackdropPress={toggleModalSuccess}
+        detailText={textModal}
       />
     </GestureHandlerRootView>
   );
